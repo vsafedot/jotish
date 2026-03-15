@@ -290,8 +290,10 @@ body {
   padding: 12px 16px;
   text-align: left;
   font-size: 0.75rem;
-  font-weight: 500;
-  color: var(--text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
   border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
@@ -302,16 +304,21 @@ body {
   padding: 0 16px;
   font-size: 0.875rem;
   color: var(--text-primary);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--bg-surface);
+  vertical-align: middle;
 }
 .virtual-row {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid var(--border);
-  transition: background var(--transition);
+  border-bottom: 1px solid var(--bg-surface);
+  transition: all var(--transition);
   cursor: pointer;
 }
-.virtual-row:hover { background: var(--bg-surface); }
+.virtual-row:hover { 
+  background: var(--bg-surface); 
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  z-index: 2;
+  position: relative;
+}
 .virtual-scroll-container {
   overflow-y: auto;
   position: relative;

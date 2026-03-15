@@ -6,14 +6,11 @@ const API_URL = 'https://backend.jotish.in/backend_dev/gettabledata.php'
 const ITEM_HEIGHT = 56
 
 const COLUMNS = [
-  { key: 'avatar',     label: '',           width: '56px'  },
-  { key: 'id',         label: 'ID',         width: '60px'  },
-  { key: 'name',       label: 'Employee',   width: '200px' },
-  { key: 'email',      label: 'Email',      width: '220px' },
-  { key: 'city',       label: 'Location',   width: '140px' },
-  { key: 'salary',     label: 'Salary',     width: '120px' },
-  { key: 'department', label: 'Dept',       width: '140px' },
-  { key: 'action',     label: '',           width: '90px'  },
+  { key: 'employee',   label: 'Employee',   width: '320px' },
+  { key: 'city',       label: 'Location',   width: '180px' },
+  { key: 'salary',     label: 'Salary',     width: '140px' },
+  { key: 'department', label: 'Dept',       width: '160px' },
+  { key: 'action',     label: '',           width: '100px' },
 ]
 
 function formatSalary(s) {
@@ -64,7 +61,28 @@ export default function ListPage() {
         })
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const json = await res.json()
-        const rows = Array.isArray(json) ? json : (json.data ?? json.employees ?? [])
+        // API returns: { TABLE_DATA: { data: [[name, position, city, age, date, salary], ...] } }
+        const raw = Array.isArray(json)
+          ? json
+          : (json.data ?? json.employees ?? json.TABLE_DATA?.data ?? [])
+        // If data comes as arrays (not objects), map to named objects
+        const rows = raw.map((item, idx) => {
+          if (Array.isArray(item)) {
+            const rawSalary = String(item[5] ?? '0');
+            const numSalary = Number(rawSalary.replace(/[^0-9.-]+/g, ''));
+            return {
+                id:         idx + 1,
+                name:       item[0]  ?? '',
+                department: item[1]  ?? '',
+                city:       item[2]  ?? '',
+                age:        item[3]  ?? '',
+                start_date: item[4]  ?? '',
+                salary:     numSalary,
+                email:      `${(item[0]||'').toLowerCase().replace(/\s+/g,'.')}@company.com`,
+            }
+          }
+          return { id: item.id ?? idx + 1, ...item }
+        })
         setAllData(rows)
         setFiltered(rows)
         storeData(rows)
@@ -258,26 +276,26 @@ function EmployeeRow({ row, onView }) {
       onClick={onView}
       style={{ height: ITEM_HEIGHT, cursor: 'pointer' }}
     >
-      <td style={{ paddingRight: 0 }}>
-        <img 
-          src={avatarUrl} 
-          alt={row.name} 
-          style={{ width: 32, height: 32, borderRadius: '50%', display: 'block', border: '1px solid var(--border)' }} 
-        />
+      <td style={{ padding: '8px 16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <img 
+            src={avatarUrl} 
+            alt={row.name} 
+            style={{ width: 36, height: 36, borderRadius: '50%', display: 'block', border: '2px solid #fff', boxShadow: '0 0 0 1px var(--border)' }} 
+          />
+          <div>
+            <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem' }}>{row.name}</div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{row.email}</div>
+          </div>
+        </div>
       </td>
-      <td style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-        {String(row.id).padStart(4, '0')}
-      </td>
-      <td>
-        <span style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{row.name}</span>
-      </td>
-      <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{row.email}</td>
       <td style={{ color: 'var(--text-secondary)' }}>
-        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          📍 {row.city}
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'var(--bg-surface)', padding: '4px 10px', borderRadius: 99, fontSize: '0.8rem' }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          {row.city}
         </span>
       </td>
-      <td style={{ fontWeight: 500, color: 'var(--text-primary)', fontSize: '0.85rem' }}>
+      <td style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.9rem', fontFeatureSettings: '"tnum"' }}>
         {formatSalary(row.salary)}
       </td>
       <td>

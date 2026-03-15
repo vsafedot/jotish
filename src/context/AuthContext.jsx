@@ -20,9 +20,9 @@ export const AuthProvider = ({ children }) => {
     if (username === 'testuser' && password === 'Test123') {
       const userData = { username };
       setUser(userData);
-      return true;
+      return { success: true };
     }
-    return false;
+    return { success: false, error: 'Invalid username or password' };
   };
 
   const logout = () => {
