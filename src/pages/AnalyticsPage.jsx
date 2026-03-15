@@ -9,13 +9,13 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     try {
-      const img = sessionStorage.getItem('jotish_merged_image')
+      const img = sessionStorage.getItem('siddharth_merged_image')
       if (img) setMergedImage(img)
 
-      const emp = sessionStorage.getItem('jotish_current_employee')
+      const emp = sessionStorage.getItem('siddharth_current_employee')
       if (emp) setEmployee(JSON.parse(emp))
 
-      const allEmp = sessionStorage.getItem('jotish_employees')
+      const allEmp = sessionStorage.getItem('siddharth_employees')
       if (allEmp) setEmployees(JSON.parse(allEmp))
     } catch (_) {}
   }, [])

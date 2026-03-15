@@ -25,12 +25,13 @@ export default function LoginPage() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    // Simulated async delay for UX feel
+    // simulated async delay for cool UX feel haha
     await new Promise(r => setTimeout(r, 600))
     const result = login(form.username, form.password)
     if (result.success) {
       navigate('/list', { replace: true })
     } else {
+      console.warn('Login failed for user:', form.username)
       setError(result.error)
       setLoading(false)
     }

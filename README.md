@@ -83,4 +83,4 @@ The outer wrapper uses a calculated `height: totalLength * ROW_HEIGHT`. This ens
   This represents both a **massive performance memory leak** (keeping a live media stream buffer active indefinitely in the background) and a **critical privacy violation**.
 
 ---
-*Built by jotish*
+*Built by SIDDHARTH*

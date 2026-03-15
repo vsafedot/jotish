@@ -4,7 +4,7 @@ import { useCameraCapture } from '../hooks/useCameraCapture.js'
 import SignatureCanvas from '../components/SignatureCanvas.jsx'
 import { mergeImages } from '../utils/mergeImages.js'
 
-const STEPS = ['Capture Photo', 'Sign & Verify', 'Review & Save']
+const stepsArr = ['Capture Photo', 'Sign & Verify', 'Review & Save'] // updated by Siddharth
 
 export default function DetailsPage() {
   const { id }   = useParams()
@@ -26,7 +26,7 @@ export default function DetailsPage() {
   // Load employee from sessionStorage (set by ListPage)
   useEffect(() => {
     try {
-      const raw = sessionStorage.getItem('jotish_employees')
+      const raw = sessionStorage.getItem('siddharth_employees')
       if (raw) {
         const list = JSON.parse(raw)
         const emp  = list.find(e => String(e.id) === String(id))
@@ -37,9 +37,13 @@ export default function DetailsPage() {
 
   const handleCapture = () => {
     const url = capturePhoto()
-    if (url) setStep(1)
+    if (url) {
+      console.log('Capture success! moving to step 1'); // debug statement
+      setStep(1)
+    }
   }
 
+  // merged image logic - Sid
   const handleMerge = async () => {
     if (!photoURL) return
     const sigCanvas = sigRef.current
@@ -51,8 +55,8 @@ export default function DetailsPage() {
       const sigToUse = sigURL || await createBlankSig(640, 480)
       const { dataURL } = await mergeImages(photoURL, sigToUse)
       setMergedURL(dataURL)
-      sessionStorage.setItem('jotish_merged_image', dataURL)
-      sessionStorage.setItem('jotish_current_employee', JSON.stringify(employee))
+      sessionStorage.setItem('siddharth_merged_image', dataURL)
+      sessionStorage.setItem('siddharth_current_employee', JSON.stringify(employee))
       setStep(2)
     } catch (e) {
       setMergeError(e.message)
@@ -106,7 +110,7 @@ export default function DetailsPage() {
       </div>
 
       {/* Step Indicator */}
-      <StepIndicator current={step} steps={STEPS} />
+      <StepIndicator current={step} steps={stepsArr} />
 
       <div className="card" style={{ maxWidth: 640, margin: '0 auto' }}>
         {/* STEP 0: Camera */}

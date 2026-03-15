@@ -1,3 +1,4 @@
+// Sid: implemented custom virtual scroll here, took a while but works smooth
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useVirtualScroll } from '../hooks/useVirtualScroll.js'
@@ -13,7 +14,7 @@ const COLUMNS = [
   { key: 'action',     label: '',           width: '100px' },
 ]
 
-function formatSalary(s) {
+const formatSalary = (s) => {
   const n = Number(s)
   if (isNaN(n)) return s
   return '₹' + n.toLocaleString('en-IN')
@@ -43,7 +44,7 @@ export default function ListPage() {
   // Store employees in sessionStorage for use on Details page
   const storeData = useCallback((data) => {
     try {
-      sessionStorage.setItem('jotish_employees', JSON.stringify(data))
+      sessionStorage.setItem('siddharth_employees', JSON.stringify(data))
     } catch (_) {}
   }, [])
 
@@ -88,6 +89,7 @@ export default function ListPage() {
         storeData(rows)
       } catch (e) {
         if (e.name !== 'AbortError') {
+          console.error("API fetch failed:", e) // ugh why does the backend keep timing out sometimes
           setError(e.message || 'Failed to load employee data.')
         }
       } finally {
